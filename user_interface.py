@@ -8,15 +8,23 @@ class UserInterface:
 		st.set_page_config(page_title="Jarvis")
 		st.title("Barbe-Quasar")
 		self.conversation_agent_object = self.get_persistant_conversation_agent()
-		self.speech_to_text_object = SpeechToText()
+		self.speech_to_text_object = self.get_persistant_speech_to_text()
 
 
 	def get_persistant_conversation_agent(self):
-		
+
 		if "conversation_agent_object" not in st.session_state:
 			st.session_state.conversation_agent_object = ConversationAgent()
 
 		return st.session_state.conversation_agent_object
+
+
+	def get_persistant_speech_to_text(self):
+
+		if "speech_to_text_object" not in st.session_state:
+			st.session_state.speech_to_text_object = SpeechToText()
+
+		return st.session_state.speech_to_text_object
 
 
 	def show_discussion_history(self):
