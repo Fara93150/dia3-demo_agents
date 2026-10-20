@@ -48,6 +48,8 @@ class ConversationAgent:
 
         self.update_conversation_history(role="assistant", content=response)
 
+        return response
+
 
 
 
@@ -77,7 +79,8 @@ class ConversationAgent:
 
 
 if __name__ == "__main__":
+    conversation_agent_object = ConversationAgent()
     question = input("Pose ta question :\n")
-    response = ask_llm(question)
+    response = conversation_agent_object.ask_llm(question)
     print("\n")
     print(response)
