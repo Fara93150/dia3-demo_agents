@@ -26,8 +26,9 @@ class UserInterface:
 	def run(self):
 		user_interaction = st.chat_input(
 			"Que veux tu moussaillon ?",
-			accept_file=False,
-			accept_audio=True
+			accept_file=True,
+			accept_audio=True,
+			file_type=["jpg", "jpeg", "png"],
 			)
 
 		if user_interaction :
@@ -36,7 +37,9 @@ class UserInterface:
 			else:
 				text_interaction = user_interaction.text
 
-			self.conversation_agent_object.ask_llm(text_interaction)
+			image = user_interaction.files[0].getvalue() if user_interaction.files else None
+
+			self.conversation_agent_object.ask_llm(text_interaction, image)
 			self.show_discussion_history()
 
 
