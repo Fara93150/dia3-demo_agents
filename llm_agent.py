@@ -35,6 +35,19 @@ class ConversationAgent:
         )
 
 
+    def transcribe(self, audio_interaction):
+ 
+        transcription = self.groq_client.audio.transcriptions.create(
+            file=("audio.wav", audio_interaction),
+            model="whisper-large-v3-turbo",
+            response_format="verbose_json",
+            timestamp_granularities = ["word", "segment"], 
+            temperature=0.0
+        )
+
+        return transcription.text
+
+
     def ask_llm(self, text_interaction):
 
         self.update_conversation_history(role="user", content=text_interaction)

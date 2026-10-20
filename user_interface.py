@@ -5,7 +5,7 @@ from llm_agent import ConversationAgent
 class UserInterface:
 	def __init__(self):
 		st.set_page_config(page_title="Jarvis")
-		st.title("Barbe-Quasar")
+		st.title("Jarvis")
 		self.conversation_agent_object = self.get_persistant_conversation_agent()
 
 
@@ -24,13 +24,18 @@ class UserInterface:
 
 
 	def run(self):
-		text_interaction = st.chat_input(
+		user_interaction = st.chat_input(
 			"Que veux tu moussaillon ?",
 			accept_file=False,
-			accept_audio=False
+			accept_audio=True
 			)
 
-		if text_interaction :
+		if user_interaction :
+			if user_interaction.audio:
+				text_interaction = self.conversation_agent_object.transcribe(user_interaction.audio.getvalue())
+			else:
+				text_interaction = user_interaction.text
+
 			self.conversation_agent_object.ask_llm(text_interaction)
 			self.show_discussion_history()
 
