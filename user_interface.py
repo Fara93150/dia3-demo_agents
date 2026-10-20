@@ -1,5 +1,6 @@
 import streamlit as st 
 from llm_agent import ConversationAgent
+from speech_to_text import SpeechToText
 
 
 class UserInterface:
@@ -7,6 +8,7 @@ class UserInterface:
 		st.set_page_config(page_title="Jarvis")
 		st.title("Barbe-Quasar")
 		self.conversation_agent_object = self.get_persistant_conversation_agent()
+		self.speech_to_text_object = SpeechToText()
 
 
 	def get_persistant_conversation_agent(self):
@@ -24,23 +26,33 @@ class UserInterface:
 
 
 	def run(self):
-		text_interaction = st.chat_input(
+		interaction = st.chat_input(
 			"Que veux tu moussaillon ?",
 			accept_file=False,
-			accept_audio=False
+			accept_audio=True
 			)
 
-		if text_interaction :
-			self.conversation_agent_object.ask_llm(text_interaction)
-			self.show_discussion_history()
+		if interaction :
+			# vocal -> on transcrit l'audio en texte, sinon on prend le texte tapé
+			if interaction.audio :
+				try :
+					text_interaction = self.speech_to_text_object.transcribe(interaction.audio)
+				except Exception as error :
+					st.error(f"Impossible de transcrire le vocal : {error}")
+					text_interaction = ""
+			else :
+				text_interaction = interaction.text
 
+			# on ignore un message vide (ex : vocal silencieux)
+			if text_interaction and text_interaction.strip() :
+				self.conversation_agent_object.ask_llm(text_interaction.strip())
+
+		self.show_discussion_history()
 
 
 if __name__ == "__main__":
 	user_interface_object = UserInterface()
 	user_interface_object.run()
-
-
 
 
 
