@@ -1,4 +1,5 @@
 import streamlit as st 
+import base64
 from llm_agent import ConversationAgent
 
 
@@ -20,7 +21,21 @@ class UserInterface:
 	def show_discussion_history(self):
 		for message in self.conversation_agent_object.get_conversation_history():
 			with st.chat_message(message["role"]):
-				st.markdown(message["content"])
+				content = message["content"]
+
+				# Cas 1 : message texte simple
+				if isinstance(content, str):
+					st.markdown(content)
+
+				# Cas 2 : liste de morceaux (texte et/ou image)
+				else:
+					for part in content:
+						if part["type"] == "text":
+							st.markdown(part["text"])
+						elif part["type"] == "image_url":
+							url = part["image_url"]["url"]           # "data:image/jpeg;base64,xxxx"
+							image_base64 = url.split(",")[1]          # on garde seulement "xxxx"
+							st.image(base64.b64decode(image_base64))  # base64 -> octets -> image
 
 
 	def run(self):
